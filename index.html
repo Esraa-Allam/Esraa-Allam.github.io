@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You, Dr. Amr Ayyad</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+    color: #d4af37;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+  }
+
+  .console {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    font-size: 1.3rem;
+    white-space: pre;
+    transition: opacity 2s ease;
+    text-shadow: 0 0 8px #d4af37;
+  }
+
+  .faded {
+    opacity: 0;
+  }
+
+  .messages {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+  }
+
+  .message {
+    position: absolute;
+    font-size: 1.2rem;
+    color: #f4e7b5;
+    opacity: 0;
+    animation: float 10s linear forwards;
+    text-shadow: 0 0 10px #f4e7b5, 0 0 20px #d4af37;
+    transition: opacity 2s ease;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px); opacity: 0; }
+  }
+
+  .profile {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    border: 3px solid #d4af37;
+    box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
+    opacity: 0;
+    transition: opacity 3s ease;
+  }
+
+  .fade-in {
+    opacity: 1;
+  }
+
+  .screen-glitch {
+    animation: flicker 1.5s linear 4;
+  }
+
+  @keyframes flicker {
+    0%, 100% { filter: none; opacity: 1; }
+    20% { filter: brightness(180%) blur(1px); opacity: 0.9; }
+    40% { filter: contrast(300%) brightness(200%); }
+    60% { filter: blur(2px); opacity: 0.5; }
+    80% { filter: grayscale(100%) brightness(300%); }
+  }
+
+  .final-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    text-align: center;
+    color: #f5d67b;
+    text-shadow: 0 0 15px #f5d67b, 0 0 30px #d4af37;
+    opacity: 0;
+    white-space: pre-line;
+    transition: opacity 3s ease;
+  }
+
+  .show {
+    opacity: 1;
+  }
+
+  /* Sparkle Effect */
+  @keyframes sparkle {
+    0% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
+    50% { text-shadow: 0 0 20px #fff6b0, 0 0 40px #d4af37; }
+    100% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
+  }
+
+  .sparkle {
+    animation: sparkle 2s infinite;
+  }
+</style>
+</head>
+<body>
+
+<div class="console" id="console"></div>
+<div class="messages" id="messages"></div>
+<img src="Profile.jpg" alt="Dr. Amr Ayyad" class="profile" id="profile">
+<div class="final-message sparkle" id="finalMessage">
+Our gratitude could fill the Great Hall’s servers —
+but we’ll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code! ??
+</div>
+
+<script>
+  const lines = [
+    "> Initiating Spell Protocol...",
+    "> Brewing appreciation potion...",
+    "> Summoning Dr. Amr Ayyad’s brilliance...",
+    "> Success ?",
+    "> Magic boot complete. Welcome, Professor."
+  ];
+
+  const messages = [
+    "You made learning enchanting again!",
+    "Your lessons feel like Lumos in the dark!",
+    "Thank you for your patience and spark of magic!",
+    "You’re one of the coolest wizards we’ve met!",
+    "This journey wouldn’t be the same without your spells!",
+    "You inspire us every single session!",
+    "Thanks for believing in us, Professor Amr ??"
+  ];
+
+  const consoleEl = document.getElementById("console");
+  const messagesEl = document.getElementById("messages");
+  const profileEl = document.getElementById("profile");
+  const finalMessageEl = document.getElementById("finalMessage");
+
+  let lineIndex = 0;
+
+  function typeLine() {
+    if (lineIndex < lines.length) {
+      const line = lines[lineIndex];
+      let i = 0;
+      const interval = setInterval(() => {
+        consoleEl.textContent += line[i];
+        i++;
+        if (i >= line.length) {
+          clearInterval(interval);
+          consoleEl.textContent += "\n";
+          lineIndex++;
+          setTimeout(typeLine, 800);
+        }
+      }, 60);
+    } else {
+      setTimeout(() => {
+        consoleEl.classList.add("faded");
+        setTimeout(() => {
+          profileEl.classList.add("fade-in");
+          setTimeout(startMessages, 2500);
+        }, 2000);
+      }, 1200);
+    }
+  }
+
+  function startMessages() {
+    const messageInterval = setInterval(() => {
+      const msg = document.createElement("div");
+      msg.classList.add("message");
+      msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+      msg.style.left = Math.random() < 0.5
+        ? Math.random() * 40 + "%"  // Left
+        : Math.random() * 40 + 50 + "%"; // Right
+      msg.style.top = Math.random() * 80 + "%";
+      messagesEl.appendChild(msg);
+      msg.style.opacity = 1;
+
+      setTimeout(() => msg.remove(), 10000);
+    }, 1500);
+
+    // 35 seconds of floating messages
+    setTimeout(() => {
+      clearInterval(messageInterval);
+      setTimeout(triggerGlitch, 10000);
+    }, 35000);
+  }
+
+  function triggerGlitch() {
+    document.body.classList.add("screen-glitch");
+    setTimeout(() => {
+      document.body.classList.remove("screen-glitch");
+      fadeOutAll();
+    }, 2000);
+  }
+
+  function fadeOutAll() {
+    const elements = [messagesEl, profileEl];
+    elements.forEach(el => el.style.transition = "opacity 2s ease");
+    elements.forEach(el => el.style.opacity = "0");
+
+    setTimeout(() => finalMessageEl.classList.add("show"), 3000);
+  }
+
+  // Start sequence
+  typeLine();
+</script>
+
+</body>
+</html>
