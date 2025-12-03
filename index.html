@@ -6,14 +6,156 @@
 <title>Thank You, Dr. Amr Ayyad</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
     padding: 0;
     height: 100vh;
-    background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1a 50%, #000000 100%);
     color: #d4af37;
     font-family: 'Cormorant Garamond', serif;
     overflow: hidden;
+    position: relative;
+  }
+
+  /* Starry background */
+  .stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Floating magical particles */
+  .magical-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatUp 15s infinite linear;
+    opacity: 0;
+  }
+
+  .particle.gold {
+    background: radial-gradient(circle, #ffd700 0%, #d4af37 50%, transparent 70%);
+    box-shadow: 0 0 10px #ffd700, 0 0 20px #d4af37;
+  }
+
+  .particle.silver {
+    background: radial-gradient(circle, #c0c0c0 0%, #a8a8a8 50%, transparent 70%);
+    box-shadow: 0 0 10px #c0c0c0, 0 0 20px #808080;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-100px) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  /* Golden Snitch */
+  .snitch {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #d4af37;
+    z-index: 2;
+    animation: snitchFly 20s infinite ease-in-out;
+  }
+
+  .snitch::before,
+  .snitch::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 8px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    border-radius: 50%;
+    animation: wingFlap 0.1s infinite alternate;
+  }
+
+  .snitch::before {
+    left: -25px;
+    transform: translateY(-50%) rotate(-20deg);
+  }
+
+  .snitch::after {
+    right: -25px;
+    transform: translateY(-50%) rotate(20deg);
+  }
+
+  @keyframes wingFlap {
+    0% { transform: translateY(-50%) rotate(-30deg) scaleY(0.8); }
+    100% { transform: translateY(-50%) rotate(30deg) scaleY(1.2); }
+  }
+
+  @keyframes snitchFly {
+    0% { top: 20%; left: 10%; }
+    15% { top: 60%; left: 80%; }
+    30% { top: 30%; left: 50%; }
+    45% { top: 70%; left: 20%; }
+    60% { top: 15%; left: 70%; }
+    75% { top: 50%; left: 30%; }
+    90% { top: 25%; left: 90%; }
+    100% { top: 20%; left: 10%; }
+  }
+
+  /* Magical glow overlay */
+  .magical-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(ellipse at 20% 80%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .console {
@@ -24,9 +166,12 @@
     white-space: pre;
     transition: opacity 2s ease;
     text-shadow: 0 0 8px #d4af37;
+    z-index: 10;
   }
 
-  .faded { opacity: 0; }
+  .faded {
+    opacity: 0;
+  }
 
   .messages {
     position: absolute;
@@ -36,6 +181,7 @@
     left: 0;
     overflow: hidden;
     pointer-events: none;
+    z-index: 10;
   }
 
   .message {
@@ -53,16 +199,27 @@
     word-wrap: break-word;
     white-space: normal;
     text-align: center;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 5px;
-    z-index: 1;
+    z-index: 10;
   }
 
   @keyframes float {
-    0% { transform: translateY(0) translateX(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-100px) translateX(0); opacity: 0; }
+    0% { 
+      transform: translateY(0) translateX(0); 
+      opacity: 0; 
+    }
+    10% { 
+      opacity: 1; 
+    }
+    90% { 
+      opacity: 1; 
+    }
+    100% { 
+      transform: translateY(-100px) translateX(0); 
+      opacity: 0; 
+    }
   }
 
   .profile {
@@ -74,14 +231,19 @@
     width: 180px;
     height: 180px;
     border: 3px solid #d4af37;
-    box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3), 0 0 100px rgba(212, 175, 55, 0.1);
     opacity: 0;
     transition: opacity 3s ease;
-    z-index: 0;
+    z-index: 5;
   }
 
-  .fade-in { opacity: 1; }
-  .screen-glitch { animation: flicker 1.5s linear 4; }
+  .fade-in {
+    opacity: 1;
+  }
+
+  .screen-glitch {
+    animation: flicker 1.5s linear 4;
+  }
 
   @keyframes flicker {
     0%, 100% { filter: none; opacity: 1; }
@@ -104,7 +266,7 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
-    z-index: 2;
+    z-index: 20;
     max-width: 80%;
     padding: 20px;
   }
@@ -122,22 +284,29 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
-    z-index: 2;
+    z-index: 20;
     max-width: 80%;
     padding: 20px;
     line-height: 2;
   }
 
-  .show { opacity: 1; }
-  .hide { opacity: 0; }
+  .show {
+    opacity: 1;
+  }
+
+  .hide {
+    opacity: 0;
+  }
 
   @keyframes sparkle {
     0% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
-    50% { text-shadow: 0 0 20px #fff6b0, 0 0 40px #d4af37; }
+    50% { text-shadow: 0 0 20px #fff6b0, 0 0 40px #d4af37, 0 0 60px #ffd700; }
     100% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
   }
 
-  .sparkle { animation: sparkle 2s infinite; }
+  .sparkle {
+    animation: sparkle 2s infinite;
+  }
 
   .cursor {
     display: inline-block;
@@ -147,15 +316,51 @@
     margin-left: 2px;
     animation: blink 0.7s infinite;
     vertical-align: text-bottom;
+    box-shadow: 0 0 5px #f5d67b;
   }
 
   @keyframes blink {
     0%, 50% { opacity: 1; }
     51%, 100% { opacity: 0; }
   }
+
+  /* Wand cursor trail effect */
+  .wand-trail {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #ffd700, transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: trailFade 1s forwards;
+  }
+
+  @keyframes trailFade {
+    0% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% { 
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
 </style>
 </head>
 <body>
+
+<!-- Starry Background -->
+<div class="stars" id="stars"></div>
+
+<!-- Magical floating particles -->
+<div class="magical-particles" id="magicalParticles"></div>
+
+<!-- Magical glow overlay -->
+<div class="magical-glow"></div>
+
+<!-- Golden Snitch -->
+<div class="snitch"></div>
 
 <div class="console" id="console"></div>
 <div class="messages" id="messages"></div>
@@ -169,6 +374,64 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
 </div>
 
 <script>
+  // Create stars
+  function createStars() {
+    const starsContainer = document.getElementById('stars');
+    const numStars = 150;
+
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.width = Math.random() * 3 + 1 + 'px';
+      star.style.height = star.style.width;
+      star.style.animationDelay = Math.random() * 3 + 's';
+      star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      starsContainer.appendChild(star);
+    }
+  }
+
+  // Create magical floating particles
+  function createMagicalParticles() {
+    const container = document.getElementById('magicalParticles');
+
+    setInterval(() => {
+      const particle = document.createElement('div');
+      particle.className = 'particle ' + (Math.random() > 0.5 ? 'gold' : 'silver');
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.width = Math.random() * 8 + 4 + 'px';
+      particle.style.height = particle.style.width;
+      particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+      particle.style.animationDelay = Math.random() * 2 + 's';
+      container.appendChild(particle);
+
+      // Remove particle after animation
+      setTimeout(() => {
+        particle.remove();
+      }, 20000);
+    }, 500);
+  }
+
+  // Wand trail effect on mouse move
+  document.addEventListener('mousemove', (e) => {
+    if (Math.random() > 0.7) {
+      const trail = document.createElement('div');
+      trail.className = 'wand-trail';
+      trail.style.left = e.clientX - 4 + 'px';
+      trail.style.top = e.clientY - 4 + 'px';
+      document.body.appendChild(trail);
+
+      setTimeout(() => {
+        trail.remove();
+      }, 1000);
+    }
+  });
+
+  // Initialize magical effects
+  createStars();
+  createMagicalParticles();
+
   const lines = [
     "> Initiating Spell Protocol...",
     "> Brewing appreciation potion...",
@@ -178,16 +441,17 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   ];
 
   const messages = [
-    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق 🤍 ~ نرمين السيد",
-    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ~Sara Mosad",
-    "Thank you for teaching me how to hunt and also for giving me a fish. ~Ahmed Yousry",
-    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you've done for us. ~Samaa Mwafi ",
-    "Thanks for being open and supportive you made the journey better. ~Omar Gaber",
-    "Big thanks to Dr. Amr for his effort during the whole program. We really appreciate it. ~Samar Mohamed",
-    "شكرًا جزيلًا لحضرتك يا دكتور على مجهودك وتعبك معانا طوال الكورس وصبرك وأسلوبك الراقي وربنا يبارك في علمك ويزيدك من فضله ويجازيك كل خير 🤲~ Manar",
-    "Grateful for your guidance , Eng. Amr. Thank you for everything. ~ Omar Hossam",
-    "Thank you Dr. Amr for the valuable sessions and for your effort and support. I'm truly grateful for your guidance and motivation. We really will miss your inspiring sessions and hope to meet you again soon. ~Hanan",
-    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
+    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق ✨🪄🤍 ~ نرمين السيد",
+    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ⚡🦉 ~Sara Mosad",
+    "Thank you for teaching me how to hunt 🎣 and also for giving me a fish 🐟. 🧙‍♂️✨ ~Ahmed Yousry",
+    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you've done for us. 🪄🌟 ~Samaa Mwafi",
+    "Thanks for being open and supportive you made the journey better. 🧹⚡ ~Omar Gaber",
+    "Big thanks to Dr. Amr for his effort during the whole program. We really appreciate it. 🏰✨ ~Samar Mohamed",
+    "شكرًا جزيلًا لحضرتك يا دكتور على مجهودك وتعبك معانا طوال الكورس وصبرك وأسلوبك الراقي وربنا يبارك في علمك ويزيدك من فضله ويجازيك كل خير 🪄🤲✨ ~ Manar",
+    "Grateful for your guidance, Eng. Amr. Thank you for everything. 🦉🌙 ~ Omar Hossam",
+    "Thank you Dr. Amr for the valuable sessions and for your effort and support. I'm truly grateful for your guidance and motivation. We really will miss your inspiring sessions and hope to meet you again soon. ⚡📚🪄 ~Hanan",
+    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. 🧙‍♂️✨🏆🪄 ~Esraa Allam",
+    "جزاك الله خيرا وبارك الله في علمك وزادك منه ونفع بك 🪄😇✨ ~ Eman Maher"
   ];
 
   const finalSentences = [
@@ -250,42 +514,60 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   function getAvailablePosition(side) {
     const positions = side === "left" ? leftPositions : rightPositions;
     const occupied = side === "left" ? leftOccupied : rightOccupied;
+
     for (let i = 0; i < occupied.length; i++) {
-      if (!occupied[i]) return { index: i, position: positions[i], side: side };
+      if (!occupied[i]) {
+        return { index: i, position: positions[i], side: side };
+      }
     }
     return null;
   }
 
   function showMessage() {
-    if (messageIndex >= messages.length) return false;
+    if (messageIndex >= messages.length) {
+      return false;
+    }
 
     const preferredSide = messageIndex % 2 === 0 ? "left" : "right";
     const alternateSide = preferredSide === "left" ? "right" : "left";
 
     let posData = getAvailablePosition(preferredSide);
-    if (!posData) posData = getAvailablePosition(alternateSide);
-    if (!posData) return true;
+    if (!posData) {
+      posData = getAvailablePosition(alternateSide);
+    }
 
-    if (posData.side === "left") leftOccupied[posData.index] = true;
-    else rightOccupied[posData.index] = true;
+    if (!posData) {
+      return true;
+    }
+
+    if (posData.side === "left") {
+      leftOccupied[posData.index] = true;
+    } else {
+      rightOccupied[posData.index] = true;
+    }
 
     const msg = document.createElement("div");
     msg.classList.add("message");
     msg.textContent = messages[messageIndex];
+
     msg.style.left = posData.position.left;
     msg.style.top = posData.position.top;
 
     messagesEl.appendChild(msg);
     messageIndex++;
 
+    const animationDuration = 10000;
     const savedSide = posData.side;
     const savedIndex = posData.index;
 
     setTimeout(() => {
       msg.remove();
-      if (savedSide === "left") leftOccupied[savedIndex] = false;
-      else rightOccupied[savedIndex] = false;
-    }, 10000);
+      if (savedSide === "left") {
+        leftOccupied[savedIndex] = false;
+      } else {
+        rightOccupied[savedIndex] = false;
+      }
+    }, animationDuration);
 
     return true;
   }
@@ -315,11 +597,11 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
 
     setTimeout(() => {
       finalMessage1El.classList.add("show");
-      
+
       setTimeout(() => {
         finalMessage1El.classList.remove("show");
         finalMessage1El.classList.add("hide");
-        
+
         setTimeout(() => {
           finalMessage2El.classList.add("show");
           typeFinalMessage();
@@ -335,7 +617,9 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
 
     function typeNextChar() {
       if (sentenceIndex >= finalSentences.length) {
-        setTimeout(() => { cursorEl.style.display = "none"; }, 1000);
+        setTimeout(() => {
+          cursorEl.style.display = "none";
+        }, 1000);
         return;
       }
 
@@ -349,7 +633,7 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
       } else {
         sentenceIndex++;
         charIndex = 0;
-        
+
         if (sentenceIndex < finalSentences.length) {
           setTimeout(() => {
             currentText += "\n\n";
@@ -357,7 +641,9 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
             setTimeout(typeNextChar, 500);
           }, 2000);
         } else {
-          setTimeout(() => { cursorEl.style.display = "none"; }, 1000);
+          setTimeout(() => {
+            cursorEl.style.display = "none";
+          }, 1000);
         }
       }
     }
