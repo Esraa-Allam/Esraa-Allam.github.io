@@ -37,6 +37,7 @@
     top: 0;
     left: 0;
     overflow: hidden;
+    pointer-events: none; /* Allow clicks to pass through */
   }
 
   .message {
@@ -47,13 +48,33 @@
     animation: float 10s linear forwards;
     text-shadow: 0 0 10px #f4e7b5, 0 0 20px #d4af37;
     transition: opacity 2s ease;
+    max-width: 300px; /* Limit message width */
+    padding: 15px;
+    box-sizing: border-box;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3); /* Slight background for readability */
+    border-radius: 5px;
+    z-index: 1; /* Ensure messages are above other content */
   }
 
   @keyframes float {
-    0% { transform: translateY(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-100px); opacity: 0; }
+    0% { 
+      transform: translateY(0) translateX(0); 
+      opacity: 0; 
+    }
+    10% { 
+      opacity: 1; 
+    }
+    90% { 
+      opacity: 1; 
+    }
+    100% { 
+      transform: translateY(-100px) translateX(0); 
+      opacity: 0; 
+    }
   }
 
   .profile {
@@ -68,6 +89,7 @@
     box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
     opacity: 0;
     transition: opacity 3s ease;
+    z-index: 0; /* Keep profile behind messages */
   }
 
   .fade-in {
@@ -99,6 +121,7 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
+    z-index: 2; /* Ensure final message is on top */
   }
 
   .show {
@@ -137,16 +160,16 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   ];
 
   const messages = [
-    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق 🤍 ~ نرمين السيد",
-    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ~Sara Mosad",
-    "Thank you for teaching me how to hunt and also for giving me a fish. ~Ahmed Yousry",
-    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you’ve done for us. ~Samaa Mwafi ",
-    "Thanks for being open and supportive you made the journey better. ~Omar Gaber",
+    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق 🤍 ~ نرمين السيد",
+    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ~Sara Mosad",
+    "Thank you for teaching me how to hunt and also for giving me a fish. ~Ahmed Yousry",
+    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you've done for us. ~Samaa Mwafi ",
+    "Thanks for being open and supportive you made the journey better. ~Omar Gaber",
     "Big thanks to Dr. Amr for his effort during the whole program. We really appreciate it. ~Samar Mohamed",
     "شكرًا جزيلًا لحضرتك يا دكتور على مجهودك وتعبك معانا طوال الكورس وصبرك وأسلوبك الراقي وربنا يبارك في علمك ويزيدك من فضله ويجازيك كل خير 🤲~ Manar",
     "Grateful for your guidance , Eng. Amr. Thank you for everything. ~ Omar Hossam",
     "Thank you Dr. Amr for the valuable sessions and for your effort and support. I'm truly grateful for your guidance and motivation. We really will miss your inspiring sessions and hope to meet you again soon. ~Hanan",
-    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You’re not just shaping minds—you’re shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
+    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
   ];
 
   const consoleEl = document.getElementById("console");
@@ -155,6 +178,9 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   const finalMessageEl = document.getElementById("finalMessage");
 
   let lineIndex = 0;
+  let activeMessages = 0;
+  const maxActiveMessages = 6; // Limit number of messages on screen at once
+  const messagePositions = new Set(); // Track used positions to prevent overlap
 
   function typeLine() {
     if (lineIndex < lines.length) {
@@ -181,20 +207,61 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     }
   }
 
+  function getAvailablePosition() {
+    // Generate positions in columns to avoid overlap
+    const positions = [
+      { left: "5%", top: "20%" },
+      { left: "5%", top: "40%" },
+      { left: "5%", top: "60%" },
+      { left: "5%", top: "80%" },
+      { left: "55%", top: "20%" },
+      { left: "55%", top: "40%" },
+      { left: "55%", top: "60%" },
+      { left: "55%", top: "80%" }
+    ];
+    
+    // Find an available position
+    for (let pos of positions) {
+      const key = `${pos.left}-${pos.top}`;
+      if (!messagePositions.has(key)) {
+        messagePositions.add(key);
+        return pos;
+      }
+    }
+    
+    // If all positions are taken, return a random one
+    const randomPos = positions[Math.floor(Math.random() * positions.length)];
+    return randomPos;
+  }
+
+  function releasePosition(left, top) {
+    const key = `${left}-${top}`;
+    messagePositions.delete(key);
+  }
+
   function startMessages() {
     const messageInterval = setInterval(() => {
+      if (activeMessages >= maxActiveMessages) return;
+      
       const msg = document.createElement("div");
       msg.classList.add("message");
       msg.textContent = messages[Math.floor(Math.random() * messages.length)];
-      msg.style.left = Math.random() < 0.5
-        ? Math.random() * 40 + "%"  // Left
-        : Math.random() * 40 + 50 + "%"; // Right
-      msg.style.top = Math.random() * 80 + "%";
+      
+      // Get a position that minimizes overlap
+      const position = getAvailablePosition();
+      msg.style.left = position.left;
+      msg.style.top = position.top;
+      
       messagesEl.appendChild(msg);
-      msg.style.opacity = 1;
+      activeMessages++;
 
-      setTimeout(() => msg.remove(), 10000);
-    }, 1500);
+      // Remove message after animation
+      setTimeout(() => {
+        msg.remove();
+        activeMessages--;
+        releasePosition(position.left, position.top);
+      }, 10000);
+    }, 2000); // Increased interval to reduce frequency
 
     // 35 seconds of floating messages
     setTimeout(() => {
@@ -225,5 +292,3 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
 
 </body>
 </html>
-
-
