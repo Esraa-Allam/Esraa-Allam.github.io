@@ -24,68 +24,36 @@
     white-space: pre;
     transition: opacity 2s ease;
     text-shadow: 0 0 8px #d4af37;
-    z-index: 100;
   }
 
   .faded {
     opacity: 0;
   }
 
-  .messages-container {
+  .messages {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none;
-  }
-
-  .message-column {
-    width: 22%; /* 4 columns with space between */
-    height: 100%;
-    position: relative;
+    overflow: hidden;
   }
 
   .message {
     position: absolute;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #f4e7b5;
     opacity: 0;
-    animation: float 12s linear forwards;
+    animation: float 10s linear forwards;
     text-shadow: 0 0 10px #f4e7b5, 0 0 20px #d4af37;
-    max-width: 100%;
-    padding: 12px 15px;
-    box-sizing: border-box;
-    line-height: 1.5;
-    word-wrap: break-word;
-    white-space: normal;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-    left: 0;
-    width: 100%;
+    transition: opacity 2s ease;
   }
 
   @keyframes float {
-    0% { 
-      transform: translateY(0) scale(0.95); 
-      opacity: 0; 
-    }
-    10% { 
-      opacity: 1; 
-      transform: translateY(0) scale(1);
-    }
-    90% { 
-      opacity: 1; 
-    }
-    100% { 
-      transform: translateY(-100vh); 
-      opacity: 0; 
-    }
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px); opacity: 0; }
   }
 
   .profile {
@@ -100,7 +68,6 @@
     box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
     opacity: 0;
     transition: opacity 3s ease;
-    z-index: 50;
   }
 
   .fade-in {
@@ -132,12 +99,6 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
-    z-index: 200;
-    max-width: 80%;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 30px;
-    border-radius: 15px;
-    border: 2px solid rgba(212, 175, 55, 0.5);
   }
 
   .show {
@@ -154,27 +115,12 @@
   .sparkle {
     animation: sparkle 2s infinite;
   }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .message-column {
-      width: 48%; /* 2 columns on mobile */
-    }
-    .message {
-      font-size: 1rem;
-      padding: 10px;
-    }
-    .console {
-      font-size: 1.1rem;
-      left: 5%;
-    }
-  }
 </style>
 </head>
 <body>
 
 <div class="console" id="console"></div>
-<div class="messages-container" id="messagesContainer"></div>
+<div class="messages" id="messages"></div>
 <img src="https://raw.githubusercontent.com/Esraa-Allam/Esraa-Allam.github.io/14366dc34dc6b055a0043c5ca8417b4f1a923191/Profile.jpeg" alt="Dr. Amr Ayyad" class="profile" id="profile">
 <div class="final-message sparkle" id="finalMessage">
 Our gratitude could fill the Great Hall's servers —
@@ -191,34 +137,24 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   ];
 
   const messages = [
-    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق 🤍 ~ نرمين السيد",
-    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ~Sara Mosad",
-    "Thank you for teaching me how to hunt and also for giving me a fish. ~Ahmed Yousry",
-    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you've done for us. ~Samaa Mwafi ",
-    "Thanks for being open and supportive you made the journey better. ~Omar Gaber",
+    "شكراً على دعمك لينا ومساعدتك لينا دايماً بجد استفدنا من حضرتك كتير وبنتمنالك كل التوفيق 🤍 ~ نرمين السيد",
+    "Thank you for being a dedicated and inspiring instructor. Your lessons made a big difference. ~Sara Mosad",
+    "Thank you for teaching me how to hunt and also for giving me a fish. ~Ahmed Yousry",
+    "Thank you so much for all your support, effort, time, and for sharing your valuable knowledge with us so generously. We truly appreciate everything you’ve done for us. ~Samaa Mwafi ",
+    "Thanks for being open and supportive you made the journey better. ~Omar Gaber",
     "Big thanks to Dr. Amr for his effort during the whole program. We really appreciate it. ~Samar Mohamed",
     "شكرًا جزيلًا لحضرتك يا دكتور على مجهودك وتعبك معانا طوال الكورس وصبرك وأسلوبك الراقي وربنا يبارك في علمك ويزيدك من فضله ويجازيك كل خير 🤲~ Manar",
     "Grateful for your guidance , Eng. Amr. Thank you for everything. ~ Omar Hossam",
     "Thank you Dr. Amr for the valuable sessions and for your effort and support. I'm truly grateful for your guidance and motivation. We really will miss your inspiring sessions and hope to meet you again soon. ~Hanan",
-    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam",
-    "جزاك الله خيرا وبارك الله في علمك وزادك منه ونفع بك ~ Eman Maher"
+    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You’re not just shaping minds—you’re shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
   ];
 
   const consoleEl = document.getElementById("console");
-  const messagesContainer = document.getElementById("messagesContainer");
+  const messagesEl = document.getElementById("messages");
   const profileEl = document.getElementById("profile");
   const finalMessageEl = document.getElementById("finalMessage");
 
   let lineIndex = 0;
-  
-  // Create columns
-  const columnCount = window.innerWidth < 768 ? 2 : 4;
-  for (let i = 0; i < columnCount; i++) {
-    const column = document.createElement("div");
-    column.className = "message-column";
-    messagesContainer.appendChild(column);
-  }
-  const columns = document.querySelectorAll('.message-column');
 
   function typeLine() {
     if (lineIndex < lines.length) {
@@ -246,42 +182,25 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   }
 
   function startMessages() {
-    let messageIndex = 0;
-    let currentColumn = 0;
-    
     const messageInterval = setInterval(() => {
-      if (messageIndex >= messages.length) {
-        messageIndex = 0; // Loop back to start if we've shown all messages
-      }
-      
       const msg = document.createElement("div");
       msg.classList.add("message");
-      msg.textContent = messages[messageIndex];
-      
-      // Calculate message height and position it at the bottom
-      const column = columns[currentColumn];
-      const msgHeight = Math.min(msg.scrollHeight, 200); // Max height for long messages
-      msg.style.bottom = '0px';
-      msg.style.height = msgHeight + 'px';
-      
-      column.appendChild(msg);
-      
-      // Remove message after animation
-      setTimeout(() => {
-        msg.remove();
-      }, 12000);
-      
-      // Move to next column for next message
-      currentColumn = (currentColumn + 1) % columns.length;
-      messageIndex++;
-      
-    }, 3000); // 3 seconds between messages
+      msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+      msg.style.left = Math.random() < 0.5
+        ? Math.random() * 40 + "%"  // Left
+        : Math.random() * 40 + 50 + "%"; // Right
+      msg.style.top = Math.random() * 80 + "%";
+      messagesEl.appendChild(msg);
+      msg.style.opacity = 1;
 
-    // 45 seconds of floating messages (slightly longer)
+      setTimeout(() => msg.remove(), 10000);
+    }, 1500);
+
+    // 35 seconds of floating messages
     setTimeout(() => {
       clearInterval(messageInterval);
-      setTimeout(triggerGlitch, 12000);
-    }, 45000);
+      setTimeout(triggerGlitch, 10000);
+    }, 35000);
   }
 
   function triggerGlitch() {
@@ -293,7 +212,7 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   }
 
   function fadeOutAll() {
-    const elements = [messagesContainer, profileEl];
+    const elements = [messagesEl, profileEl];
     elements.forEach(el => el.style.transition = "opacity 2s ease");
     elements.forEach(el => el.style.opacity = "0");
 
