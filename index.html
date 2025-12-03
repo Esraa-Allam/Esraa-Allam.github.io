@@ -26,9 +26,7 @@
     text-shadow: 0 0 8px #d4af37;
   }
 
-  .faded {
-    opacity: 0;
-  }
+  .faded { opacity: 0; }
 
   .messages {
     position: absolute;
@@ -37,7 +35,7 @@
     top: 0;
     left: 0;
     overflow: hidden;
-    pointer-events: none; /* Allow clicks to pass through */
+    pointer-events: none;
   }
 
   .message {
@@ -48,33 +46,23 @@
     animation: float 10s linear forwards;
     text-shadow: 0 0 10px #f4e7b5, 0 0 20px #d4af37;
     transition: opacity 2s ease;
-    max-width: 300px; /* Limit message width */
+    max-width: 300px;
     padding: 15px;
     box-sizing: border-box;
     line-height: 1.5;
     word-wrap: break-word;
     white-space: normal;
     text-align: center;
-    background: rgba(0, 0, 0, 0.3); /* Slight background for readability */
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 5px;
-    z-index: 1; /* Ensure messages are above other content */
+    z-index: 1;
   }
 
   @keyframes float {
-    0% { 
-      transform: translateY(0) translateX(0); 
-      opacity: 0; 
-    }
-    10% { 
-      opacity: 1; 
-    }
-    90% { 
-      opacity: 1; 
-    }
-    100% { 
-      transform: translateY(-100px) translateX(0); 
-      opacity: 0; 
-    }
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) translateX(0); opacity: 0; }
   }
 
   .profile {
@@ -89,16 +77,11 @@
     box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
     opacity: 0;
     transition: opacity 3s ease;
-    z-index: 0; /* Keep profile behind messages */
+    z-index: 0;
   }
 
-  .fade-in {
-    opacity: 1;
-  }
-
-  .screen-glitch {
-    animation: flicker 1.5s linear 4;
-  }
+  .fade-in { opacity: 1; }
+  .screen-glitch { animation: flicker 1.5s linear 4; }
 
   @keyframes flicker {
     0%, 100% { filter: none; opacity: 1; }
@@ -121,22 +104,54 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
-    z-index: 2; /* Ensure final message is on top */
+    z-index: 2;
+    max-width: 80%;
+    padding: 20px;
   }
 
-  .show {
-    opacity: 1;
+  .final-message-typed {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    text-align: center;
+    color: #f5d67b;
+    text-shadow: 0 0 15px #f5d67b, 0 0 30px #d4af37;
+    opacity: 0;
+    white-space: pre-line;
+    transition: opacity 3s ease;
+    z-index: 2;
+    max-width: 80%;
+    padding: 20px;
+    line-height: 2;
   }
 
-  /* Sparkle Effect */
+  .show { opacity: 1; }
+  .hide { opacity: 0; }
+
   @keyframes sparkle {
     0% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
     50% { text-shadow: 0 0 20px #fff6b0, 0 0 40px #d4af37; }
     100% { text-shadow: 0 0 5px #f5d67b, 0 0 10px #d4af37; }
   }
 
-  .sparkle {
-    animation: sparkle 2s infinite;
+  .sparkle { animation: sparkle 2s infinite; }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: #f5d67b;
+    margin-left: 2px;
+    animation: blink 0.7s infinite;
+    vertical-align: text-bottom;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
   }
 </style>
 </head>
@@ -145,9 +160,12 @@
 <div class="console" id="console"></div>
 <div class="messages" id="messages"></div>
 <img src="https://raw.githubusercontent.com/Esraa-Allam/Esraa-Allam.github.io/14366dc34dc6b055a0043c5ca8417b4f1a923191/Profile.jpeg" alt="Dr. Amr Ayyad" class="profile" id="profile">
-<div class="final-message sparkle" id="finalMessage">
+<div class="final-message sparkle" id="finalMessage1">
 Our gratitude could fill the Great Hall's servers —
-but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code! ??
+but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code! 🧙‍♂️
+</div>
+<div class="final-message-typed sparkle" id="finalMessage2">
+<span id="typedText"></span><span class="cursor" id="cursor"></span>
 </div>
 
 <script>
@@ -155,7 +173,7 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     "> Initiating Spell Protocol...",
     "> Brewing appreciation potion...",
     "> Summoning Dr. Amr Ayyad's brilliance...",
-    "> Success ?",
+    "> Success ✨",
     "> Magic boot complete. Welcome, Professor."
   ];
 
@@ -172,15 +190,37 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
   ];
 
+  const finalSentences = [
+    "We know we were a little troublesome, always asking, always confused, sometimes chaotic, but you never gave up on us.",
+    "You guided us with patience, cared more than we ever expected, and left a mark we'll carry forever.",
+    "We truly hope you won't forget us… because we'll never forget everything you've done. 💛"
+  ];
+
   const consoleEl = document.getElementById("console");
   const messagesEl = document.getElementById("messages");
   const profileEl = document.getElementById("profile");
-  const finalMessageEl = document.getElementById("finalMessage");
+  const finalMessage1El = document.getElementById("finalMessage1");
+  const finalMessage2El = document.getElementById("finalMessage2");
+  const typedTextEl = document.getElementById("typedText");
+  const cursorEl = document.getElementById("cursor");
 
   let lineIndex = 0;
-  let activeMessages = 0;
-  const maxActiveMessages = 6; // Limit number of messages on screen at once
-  const messagePositions = new Set(); // Track used positions to prevent overlap
+  let messageIndex = 0;
+
+  const leftPositions = [
+    { left: "3%", top: "15%" },
+    { left: "3%", top: "45%" },
+    { left: "3%", top: "75%" }
+  ];
+
+  const rightPositions = [
+    { left: "60%", top: "15%" },
+    { left: "60%", top: "45%" },
+    { left: "60%", top: "75%" }
+  ];
+
+  const leftOccupied = new Array(leftPositions.length).fill(false);
+  const rightOccupied = new Array(rightPositions.length).fill(false);
 
   function typeLine() {
     if (lineIndex < lines.length) {
@@ -207,67 +247,57 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     }
   }
 
-  function getAvailablePosition() {
-    // Generate positions in columns to avoid overlap
-    const positions = [
-      { left: "5%", top: "20%" },
-      { left: "5%", top: "40%" },
-      { left: "5%", top: "60%" },
-      { left: "5%", top: "80%" },
-      { left: "55%", top: "20%" },
-      { left: "55%", top: "40%" },
-      { left: "55%", top: "60%" },
-      { left: "55%", top: "80%" }
-    ];
-    
-    // Find an available position
-    for (let pos of positions) {
-      const key = `${pos.left}-${pos.top}`;
-      if (!messagePositions.has(key)) {
-        messagePositions.add(key);
-        return pos;
-      }
+  function getAvailablePosition(side) {
+    const positions = side === "left" ? leftPositions : rightPositions;
+    const occupied = side === "left" ? leftOccupied : rightOccupied;
+    for (let i = 0; i < occupied.length; i++) {
+      if (!occupied[i]) return { index: i, position: positions[i], side: side };
     }
-    
-    // If all positions are taken, return a random one
-    const randomPos = positions[Math.floor(Math.random() * positions.length)];
-    return randomPos;
+    return null;
   }
 
-  function releasePosition(left, top) {
-    const key = `${left}-${top}`;
-    messagePositions.delete(key);
+  function showMessage() {
+    if (messageIndex >= messages.length) return false;
+
+    const preferredSide = messageIndex % 2 === 0 ? "left" : "right";
+    const alternateSide = preferredSide === "left" ? "right" : "left";
+
+    let posData = getAvailablePosition(preferredSide);
+    if (!posData) posData = getAvailablePosition(alternateSide);
+    if (!posData) return true;
+
+    if (posData.side === "left") leftOccupied[posData.index] = true;
+    else rightOccupied[posData.index] = true;
+
+    const msg = document.createElement("div");
+    msg.classList.add("message");
+    msg.textContent = messages[messageIndex];
+    msg.style.left = posData.position.left;
+    msg.style.top = posData.position.top;
+
+    messagesEl.appendChild(msg);
+    messageIndex++;
+
+    const savedSide = posData.side;
+    const savedIndex = posData.index;
+
+    setTimeout(() => {
+      msg.remove();
+      if (savedSide === "left") leftOccupied[savedIndex] = false;
+      else rightOccupied[savedIndex] = false;
+    }, 10000);
+
+    return true;
   }
 
   function startMessages() {
     const messageInterval = setInterval(() => {
-      if (activeMessages >= maxActiveMessages) return;
-      
-      const msg = document.createElement("div");
-      msg.classList.add("message");
-      msg.textContent = messages[Math.floor(Math.random() * messages.length)];
-      
-      // Get a position that minimizes overlap
-      const position = getAvailablePosition();
-      msg.style.left = position.left;
-      msg.style.top = position.top;
-      
-      messagesEl.appendChild(msg);
-      activeMessages++;
-
-      // Remove message after animation
-      setTimeout(() => {
-        msg.remove();
-        activeMessages--;
-        releasePosition(position.left, position.top);
-      }, 10000);
-    }, 2000); // Increased interval to reduce frequency
-
-    // 35 seconds of floating messages
-    setTimeout(() => {
-      clearInterval(messageInterval);
-      setTimeout(triggerGlitch, 10000);
-    }, 35000);
+      const hasMore = showMessage();
+      if (!hasMore) {
+        clearInterval(messageInterval);
+        setTimeout(triggerGlitch, 12000);
+      }
+    }, 3500);
   }
 
   function triggerGlitch() {
@@ -283,10 +313,58 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     elements.forEach(el => el.style.transition = "opacity 2s ease");
     elements.forEach(el => el.style.opacity = "0");
 
-    setTimeout(() => finalMessageEl.classList.add("show"), 3000);
+    setTimeout(() => {
+      finalMessage1El.classList.add("show");
+      
+      setTimeout(() => {
+        finalMessage1El.classList.remove("show");
+        finalMessage1El.classList.add("hide");
+        
+        setTimeout(() => {
+          finalMessage2El.classList.add("show");
+          typeFinalMessage();
+        }, 3000);
+      }, 6000);
+    }, 3000);
   }
 
-  // Start sequence
+  function typeFinalMessage() {
+    let sentenceIndex = 0;
+    let charIndex = 0;
+    let currentText = "";
+
+    function typeNextChar() {
+      if (sentenceIndex >= finalSentences.length) {
+        setTimeout(() => { cursorEl.style.display = "none"; }, 1000);
+        return;
+      }
+
+      const currentSentence = finalSentences[sentenceIndex];
+
+      if (charIndex < currentSentence.length) {
+        currentText += currentSentence[charIndex];
+        typedTextEl.textContent = currentText;
+        charIndex++;
+        setTimeout(typeNextChar, 50);
+      } else {
+        sentenceIndex++;
+        charIndex = 0;
+        
+        if (sentenceIndex < finalSentences.length) {
+          setTimeout(() => {
+            currentText += "\n\n";
+            typedTextEl.textContent = currentText;
+            setTimeout(typeNextChar, 500);
+          }, 2000);
+        } else {
+          setTimeout(() => { cursorEl.style.display = "none"; }, 1000);
+        }
+      }
+    }
+
+    typeNextChar();
+  }
+
   typeLine();
 </script>
 
