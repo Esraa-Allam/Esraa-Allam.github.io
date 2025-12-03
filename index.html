@@ -24,55 +24,66 @@
     white-space: pre;
     transition: opacity 2s ease;
     text-shadow: 0 0 8px #d4af37;
+    z-index: 100;
   }
 
   .faded {
     opacity: 0;
   }
 
-  .messages {
+  .messages-container {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    overflow: hidden;
-    pointer-events: none; /* Allow clicks to pass through */
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .message-column {
+    width: 22%; /* 4 columns with space between */
+    height: 100%;
+    position: relative;
   }
 
   .message {
     position: absolute;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: #f4e7b5;
     opacity: 0;
-    animation: float 10s linear forwards;
+    animation: float 12s linear forwards;
     text-shadow: 0 0 10px #f4e7b5, 0 0 20px #d4af37;
-    transition: opacity 2s ease;
-    max-width: 300px; /* Limit message width */
-    padding: 15px;
+    max-width: 100%;
+    padding: 12px 15px;
     box-sizing: border-box;
     line-height: 1.5;
     word-wrap: break-word;
     white-space: normal;
     text-align: center;
-    background: rgba(0, 0, 0, 0.3); /* Slight background for readability */
-    border-radius: 5px;
-    z-index: 1; /* Ensure messages are above other content */
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    left: 0;
+    width: 100%;
   }
 
   @keyframes float {
     0% { 
-      transform: translateY(0) translateX(0); 
+      transform: translateY(0) scale(0.95); 
       opacity: 0; 
     }
     10% { 
       opacity: 1; 
+      transform: translateY(0) scale(1);
     }
     90% { 
       opacity: 1; 
     }
     100% { 
-      transform: translateY(-100px) translateX(0); 
+      transform: translateY(-100vh); 
       opacity: 0; 
     }
   }
@@ -89,7 +100,7 @@
     box-shadow: 0 0 20px #d4af37, 0 0 60px rgba(212, 175, 55, 0.3);
     opacity: 0;
     transition: opacity 3s ease;
-    z-index: 0; /* Keep profile behind messages */
+    z-index: 50;
   }
 
   .fade-in {
@@ -121,7 +132,12 @@
     opacity: 0;
     white-space: pre-line;
     transition: opacity 3s ease;
-    z-index: 2; /* Ensure final message is on top */
+    z-index: 200;
+    max-width: 80%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid rgba(212, 175, 55, 0.5);
   }
 
   .show {
@@ -138,12 +154,27 @@
   .sparkle {
     animation: sparkle 2s infinite;
   }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .message-column {
+      width: 48%; /* 2 columns on mobile */
+    }
+    .message {
+      font-size: 1rem;
+      padding: 10px;
+    }
+    .console {
+      font-size: 1.1rem;
+      left: 5%;
+    }
+  }
 </style>
 </head>
 <body>
 
 <div class="console" id="console"></div>
-<div class="messages" id="messages"></div>
+<div class="messages-container" id="messagesContainer"></div>
 <img src="https://raw.githubusercontent.com/Esraa-Allam/Esraa-Allam.github.io/14366dc34dc6b055a0043c5ca8417b4f1a923191/Profile.jpeg" alt="Dr. Amr Ayyad" class="profile" id="profile">
 <div class="final-message sparkle" id="finalMessage">
 Our gratitude could fill the Great Hall's servers —
@@ -169,18 +200,25 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     "شكرًا جزيلًا لحضرتك يا دكتور على مجهودك وتعبك معانا طوال الكورس وصبرك وأسلوبك الراقي وربنا يبارك في علمك ويزيدك من فضله ويجازيك كل خير 🤲~ Manar",
     "Grateful for your guidance , Eng. Amr. Thank you for everything. ~ Omar Hossam",
     "Thank you Dr. Amr for the valuable sessions and for your effort and support. I'm truly grateful for your guidance and motivation. We really will miss your inspiring sessions and hope to meet you again soon. ~Hanan",
-    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam"
+    "In a world filled with teachers, very few rise to the level of true mentors—but you do. Despite your young age, you carry a rare brilliance and a depth of wisdom that touches people in ways they don't forget. You guide with patience, you inspire with sincerity, and you believe in others even before they believe in themselves. You're not just shaping minds—you're shaping lives. And for those fortunate enough to learn from you, your impact becomes a part of who they grow to be. ~Esraa Allam",
+    "جزاك الله خيرا وبارك الله في علمك وزادك منه ونفع بك ~ Eman Maher"
   ];
 
   const consoleEl = document.getElementById("console");
-  const messagesEl = document.getElementById("messages");
+  const messagesContainer = document.getElementById("messagesContainer");
   const profileEl = document.getElementById("profile");
   const finalMessageEl = document.getElementById("finalMessage");
 
   let lineIndex = 0;
-  let activeMessages = 0;
-  const maxActiveMessages = 6; // Limit number of messages on screen at once
-  const messagePositions = new Set(); // Track used positions to prevent overlap
+  
+  // Create columns
+  const columnCount = window.innerWidth < 768 ? 2 : 4;
+  for (let i = 0; i < columnCount; i++) {
+    const column = document.createElement("div");
+    column.className = "message-column";
+    messagesContainer.appendChild(column);
+  }
+  const columns = document.querySelectorAll('.message-column');
 
   function typeLine() {
     if (lineIndex < lines.length) {
@@ -207,67 +245,43 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
     }
   }
 
-  function getAvailablePosition() {
-    // Generate positions in columns to avoid overlap
-    const positions = [
-      { left: "5%", top: "20%" },
-      { left: "5%", top: "40%" },
-      { left: "5%", top: "60%" },
-      { left: "5%", top: "80%" },
-      { left: "55%", top: "20%" },
-      { left: "55%", top: "40%" },
-      { left: "55%", top: "60%" },
-      { left: "55%", top: "80%" }
-    ];
-    
-    // Find an available position
-    for (let pos of positions) {
-      const key = `${pos.left}-${pos.top}`;
-      if (!messagePositions.has(key)) {
-        messagePositions.add(key);
-        return pos;
-      }
-    }
-    
-    // If all positions are taken, return a random one
-    const randomPos = positions[Math.floor(Math.random() * positions.length)];
-    return randomPos;
-  }
-
-  function releasePosition(left, top) {
-    const key = `${left}-${top}`;
-    messagePositions.delete(key);
-  }
-
   function startMessages() {
+    let messageIndex = 0;
+    let currentColumn = 0;
+    
     const messageInterval = setInterval(() => {
-      if (activeMessages >= maxActiveMessages) return;
+      if (messageIndex >= messages.length) {
+        messageIndex = 0; // Loop back to start if we've shown all messages
+      }
       
       const msg = document.createElement("div");
       msg.classList.add("message");
-      msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+      msg.textContent = messages[messageIndex];
       
-      // Get a position that minimizes overlap
-      const position = getAvailablePosition();
-      msg.style.left = position.left;
-      msg.style.top = position.top;
+      // Calculate message height and position it at the bottom
+      const column = columns[currentColumn];
+      const msgHeight = Math.min(msg.scrollHeight, 200); // Max height for long messages
+      msg.style.bottom = '0px';
+      msg.style.height = msgHeight + 'px';
       
-      messagesEl.appendChild(msg);
-      activeMessages++;
-
+      column.appendChild(msg);
+      
       // Remove message after animation
       setTimeout(() => {
         msg.remove();
-        activeMessages--;
-        releasePosition(position.left, position.top);
-      }, 10000);
-    }, 2000); // Increased interval to reduce frequency
+      }, 12000);
+      
+      // Move to next column for next message
+      currentColumn = (currentColumn + 1) % columns.length;
+      messageIndex++;
+      
+    }, 3000); // 3 seconds between messages
 
-    // 35 seconds of floating messages
+    // 45 seconds of floating messages (slightly longer)
     setTimeout(() => {
       clearInterval(messageInterval);
-      setTimeout(triggerGlitch, 10000);
-    }, 35000);
+      setTimeout(triggerGlitch, 12000);
+    }, 45000);
   }
 
   function triggerGlitch() {
@@ -279,7 +293,7 @@ but we'll stop here, before He-Who-Must-Not-Be-Named hacks our appreciation code
   }
 
   function fadeOutAll() {
-    const elements = [messagesEl, profileEl];
+    const elements = [messagesContainer, profileEl];
     elements.forEach(el => el.style.transition = "opacity 2s ease");
     elements.forEach(el => el.style.opacity = "0");
 
